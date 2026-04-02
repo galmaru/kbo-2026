@@ -35,7 +35,7 @@ function getSampleGames(dateStr: string): Game[] {
       homeScore: isToday || dateStr < today ? 3 : undefined,
       awayScore: isToday || dateStr < today ? 5 : undefined,
       inning: isToday ? '7회 초' : undefined,
-      naverGameId: `${dateStr}LGOB0`,
+      naverGameId: `${dateStr}LGOB02026`,
     },
     {
       gameId: `${dateStr}_LT_SK`,
@@ -47,7 +47,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'scheduled' : dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 7 : undefined,
       awayScore: dateStr < today ? 2 : undefined,
-      naverGameId: `${dateStr}SKLT0`,
+      naverGameId: `${dateStr}SKLT02026`,
     },
     {
       gameId: `${dateStr}_HH_SS`,
@@ -59,7 +59,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'scheduled' : dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 4 : undefined,
       awayScore: dateStr < today ? 1 : undefined,
-      naverGameId: `${dateStr}SSHH0`,
+      naverGameId: `${dateStr}SSHH02026`,
     },
     {
       gameId: `${dateStr}_HT_NC`,
@@ -71,7 +71,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'final' : dateStr < today ? 'final' : 'scheduled',
       homeScore: isToday || dateStr < today ? 6 : undefined,
       awayScore: isToday || dateStr < today ? 3 : undefined,
-      naverGameId: `${dateStr}NCHT0`,
+      naverGameId: `${dateStr}NCHT02026`,
     },
     {
       gameId: `${dateStr}_KT_WO`,
@@ -83,7 +83,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 2 : undefined,
       awayScore: dateStr < today ? 5 : undefined,
-      naverGameId: `${dateStr}WOKT0`,
+      naverGameId: `${dateStr}WOKT02026`,
     },
   ]
   return base
@@ -111,12 +111,12 @@ export function useSchedule(dateStr: string): UseScheduleResult {
         date: dateStr,
         time: String(g.gameDateTime ?? '18:30').slice(11, 16) || '18:30',
         stadium: String(g.stadium ?? g.stadiumName ?? ''),
-        homeTeamId: String(g.homeTeamId ?? ''),
-        awayTeamId: String(g.awayTeamId ?? ''),
+        homeTeamId: String(g.homeTeamCode ?? g.homeTeamId ?? ''),
+        awayTeamId: String(g.awayTeamCode ?? g.awayTeamId ?? ''),
         homeScore: g.homeTeamScore != null ? Number(g.homeTeamScore) : undefined,
         awayScore: g.awayTeamScore != null ? Number(g.awayTeamScore) : undefined,
         status: parseStatus(String(g.statusCode ?? '0')),
-        inning: g.currentInning ? `${g.currentInning}회 ${g.currentInningSymbol === 'TOP' ? '초' : '말'}` : undefined,
+        inning: g.statusCode === 'LIVE' && g.statusInfo ? String(g.statusInfo) : undefined,
         naverGameId: String(g.gameId ?? ''),
       }))
       setGames(parsed)

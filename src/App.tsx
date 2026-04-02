@@ -3,11 +3,11 @@ import { format } from 'date-fns'
 import { DateSlider } from './components/DateSlider'
 import { GameCard } from './components/GameCard'
 import { FavoritesTab } from './components/FavoritesTab'
-import { StandingsTab } from './components/StandingsTab'
+import { CalendarTab } from './components/CalendarTab'
 import { useSchedule } from './hooks/useSchedule'
 import { useFavorites } from './hooks/useFavorites'
 
-type Tab = 'schedule' | 'standings' | 'favorites'
+type Tab = 'schedule' | 'calendar' | 'favorites'
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('schedule')
@@ -19,17 +19,21 @@ export default function App() {
 
   const sortedGames = useMemo(() => {
     return [...games].sort((a, b) => {
-      // 즐겨찾기 팀 경기 상단
       const aFav = isFavorite(a.homeTeamId) || isFavorite(a.awayTeamId) ? 0 : 1
       const bFav = isFavorite(b.homeTeamId) || isFavorite(b.awayTeamId) ? 0 : 1
       if (aFav !== bFav) return aFav - bFav
-      // 라이브 > 예정 > 종료
       const order: Record<string, number> = { live: 0, scheduled: 1, final: 2, cancelled: 3, postponed: 3 }
       return (order[a.status] ?? 9) - (order[b.status] ?? 9)
     })
   }, [games, isFavorite])
 
   const liveCount = games.filter(g => g.status === 'live').length
+
+  // 달력에서 날짜 클릭 → 일정 탭으로 이동
+  const handleCalendarDateSelect = (date: Date) => {
+    setSelectedDate(date)
+    setTab('schedule')
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a12] text-white flex justify-center">
@@ -83,7 +87,9 @@ export default function App() {
               )}
             </div>
           )}
-          {tab === 'standings' && <StandingsTab />}
+          {tab === 'calendar' && (
+            <CalendarTab isFavorite={isFavorite} onDateSelect={handleCalendarDateSelect} />
+          )}
           {tab === 'favorites' && (
             <div className="pb-20">
               <FavoritesTab favorites={favorites} onToggle={toggle} />
@@ -94,8 +100,8 @@ export default function App() {
         {/* 하단 탭바 */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#0f0f1a] border-t border-gray-800 flex z-10">
           {([
-            { id: 'schedule', label: '일정', icon: CalendarIcon },
-            { id: 'standings', label: '순위', icon: TrophyIcon },
+            { id: 'schedule', label: '일정', icon: ScheduleIcon },
+            { id: 'calendar', label: '달력', icon: CalendarIcon },
             { id: 'favorites', label: `즐겨찾기${favorites.length > 0 ? ` ${favorites.length}` : ''}`, icon: StarIcon },
           ] as const).map(({ id, label, icon: Icon }) => (
             <button
@@ -134,19 +140,22 @@ function EmptyState() {
   )
 }
 
+function ScheduleIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 6h12M4 10h8M4 14h6" stroke={active ? '#f97316' : '#6b7280'} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
 function CalendarIcon({ active }: { active: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <rect x="2" y="4" width="16" height="14" rx="2" stroke={active ? '#f97316' : '#6b7280'} strokeWidth="1.5"/>
       <path d="M6 2v4M14 2v4M2 8h16" stroke={active ? '#f97316' : '#6b7280'} strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  )
-}
-
-function TrophyIcon({ active }: { active: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M6 2h8v8a4 4 0 01-8 0V2zM4 4H2a2 2 0 002 4M16 4h2a2 2 0 01-2 4M10 14v3M7 18h6" stroke={active ? '#f97316' : '#6b7280'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="7" cy="13" r="1" fill={active ? '#f97316' : '#6b7280'}/>
+      <circle cx="10" cy="13" r="1" fill={active ? '#f97316' : '#6b7280'}/>
+      <circle cx="13" cy="13" r="1" fill={active ? '#f97316' : '#6b7280'}/>
     </svg>
   )
 }

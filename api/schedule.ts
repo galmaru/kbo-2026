@@ -3,19 +3,35 @@
 
 export const config = { runtime: 'edge' }
 
+function toFormattedDate(yyyymmdd: string) {
+  return `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}`
+}
+
 export default async function handler(req: Request) {
   const url = new URL(req.url)
-  const date = url.searchParams.get('date') // YYYYMMDD
+  const date = url.searchParams.get('date')       // YYYYMMDD (단일 날짜)
+  const fromDate = url.searchParams.get('fromDate') // YYYYMMDD (범위 시작)
+  const toDate = url.searchParams.get('toDate')     // YYYYMMDD (범위 끝)
 
-  if (!date || !/^\d{8}$/.test(date)) {
-    return new Response(JSON.stringify({ error: 'Invalid date' }), { status: 400 })
+  let from: string
+  let to: string
+
+  if (date) {
+    if (!/^\d{8}$/.test(date)) {
+      return new Response(JSON.stringify({ error: 'Invalid date' }), { status: 400 })
+    }
+    from = to = toFormattedDate(date)
+  } else if (fromDate && toDate) {
+    if (!/^\d{8}$/.test(fromDate) || !/^\d{8}$/.test(toDate)) {
+      return new Response(JSON.stringify({ error: 'Invalid date range' }), { status: 400 })
+    }
+    from = toFormattedDate(fromDate)
+    to = toFormattedDate(toDate)
+  } else {
+    return new Response(JSON.stringify({ error: 'date or fromDate/toDate required' }), { status: 400 })
   }
 
-  // YYYYMMDD → YYYY-MM-DD 변환 (네이버 API 요구 형식)
-  const formattedDate = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`
-
-  // 네이버 스포츠 KBO 일정 API
-  const naverUrl = `https://api-gw.sports.naver.com/schedule/games?fields=basic,schedule,baseball&categoryId=kbo&fromDate=${formattedDate}&toDate=${formattedDate}&size=500`
+  const naverUrl = `https://api-gw.sports.naver.com/schedule/games?fields=basic,schedule,baseball&categoryId=kbo&fromDate=${from}&toDate=${to}&size=500`
 
   try {
     const res = await fetch(naverUrl, {
@@ -32,7 +48,7 @@ export default async function handler(req: Request) {
     return new Response(JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
         'Access-Control-Allow-Origin': '*',
       },
     })

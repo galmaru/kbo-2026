@@ -35,7 +35,7 @@ function getSampleGames(dateStr: string): Game[] {
       homeScore: isToday || dateStr < today ? 3 : undefined,
       awayScore: isToday || dateStr < today ? 5 : undefined,
       inning: isToday ? '7회 초' : undefined,
-      naverGameId: `${dateStr}OBLG02026`,
+      naverGameId: `${dateStr}LGOB0`,
     },
     {
       gameId: `${dateStr}_LT_SK`,
@@ -47,7 +47,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'scheduled' : dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 7 : undefined,
       awayScore: dateStr < today ? 2 : undefined,
-      naverGameId: `${dateStr}LTSK02026`,
+      naverGameId: `${dateStr}SKLT0`,
     },
     {
       gameId: `${dateStr}_HH_SS`,
@@ -59,7 +59,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'scheduled' : dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 4 : undefined,
       awayScore: dateStr < today ? 1 : undefined,
-      naverGameId: `${dateStr}HHSS02026`,
+      naverGameId: `${dateStr}SSHH0`,
     },
     {
       gameId: `${dateStr}_HT_NC`,
@@ -71,7 +71,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: isToday ? 'final' : dateStr < today ? 'final' : 'scheduled',
       homeScore: isToday || dateStr < today ? 6 : undefined,
       awayScore: isToday || dateStr < today ? 3 : undefined,
-      naverGameId: `${dateStr}HTNC02026`,
+      naverGameId: `${dateStr}NCHT0`,
     },
     {
       gameId: `${dateStr}_KT_WO`,
@@ -83,7 +83,7 @@ function getSampleGames(dateStr: string): Game[] {
       status: dateStr < today ? 'final' : 'scheduled',
       homeScore: dateStr < today ? 2 : undefined,
       awayScore: dateStr < today ? 5 : undefined,
-      naverGameId: `${dateStr}KTWO02026`,
+      naverGameId: `${dateStr}WOKT0`,
     },
   ]
   return base

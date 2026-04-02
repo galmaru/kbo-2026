@@ -27,6 +27,9 @@ export function getNaverGameUrl(game: { naverGameId?: string; status: string; da
   if (game.status === 'final') {
     return `${base}/${game.naverGameId}/record`
   }
+  if (game.status === 'scheduled') {
+    return `${base}/${game.naverGameId}/preview`
+  }
   return `https://m.sports.naver.com/kbaseball/schedule/index`
 }
 

@@ -17,7 +17,7 @@ export function GameCard({ game, isFavoriteGame }: Props) {
   const isCancelled = game.status === 'cancelled' || game.status === 'postponed'
 
   const naverUrl = getNaverGameUrl(game)
-  const isClickable = isLive || isFinal
+  const isClickable = isLive || isFinal || isScheduled
 
   const handleClick = () => {
     if (isClickable) window.open(naverUrl, '_blank', 'noopener,noreferrer')

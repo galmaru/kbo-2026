@@ -46,9 +46,9 @@ export function GameCard({ game, isFavoriteGame }: Props) {
           {isLive && game.inning && (
             <span className="text-[11px] text-gray-400">{game.inning}</span>
           )}
-          {isScheduled && (
-            <span className="text-[12px] font-medium text-gray-300">{game.time}</span>
-          )}
+          <span className={`text-[12px] ${isScheduled ? 'font-medium text-gray-300' : 'text-gray-600'}`}>
+            {game.time}
+          </span>
           {isFinal && (
             <span className="text-[11px] text-gray-500 border border-gray-700 px-2 py-[1px] rounded-full">종료</span>
           )}
